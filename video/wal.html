@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AMC+ Player</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#000;width:100%;height:100%;overflow:hidden;font-family:'Helvetica Neue',Arial,sans-serif}
+
+:root{
+  --bar:#5ecfb0; /* açık teal-yeşil karışımı */
+  --bar2:#7edfc0;
+}
+
+.wrap{position:relative;width:100vw;height:100vh;background:#000;overflow:hidden;cursor:none}
+.wrap:hover{cursor:default}
+video{width:100%;height:100%;object-fit:contain;display:block}
+
+/* OVERLAY */
+.overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;opacity:1;transition:opacity .32s ease;pointer-events:all}
+.overlay.hidden{opacity:0;pointer-events:none}
+.overlay::before{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.75) 0%,transparent 44%);pointer-events:none}
+
+/* CENTER */
+.center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;align-items:center;gap:42px;pointer-events:all}
+.skip{display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;cursor:pointer;color:rgba(255,255,255,.78);transition:color .14s,transform .14s;padding:6px}
+.skip:hover{color:#fff;transform:scale(1.1)}
+.skip:active{transform:scale(.93)}
+.skip svg{width:26px;height:26px}
+.skip span{font-size:9px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;opacity:.58}
+.playbtn{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.11);border:1.5px solid rgba(255,255,255,.26);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;transition:background .2s,transform .14s,border-color .2s}
+.playbtn:hover{background:rgba(94,207,176,.45);border-color:rgba(94,207,176,.75);transform:scale(1.08)}
+.playbtn:active{transform:scale(.93)}
+.playbtn svg{width:24px;height:24px}
+.ico-play{margin-left:3px}
+
+/* BOTTOM */
+.bottom{position:relative;z-index:5;padding:0 18px 15px}
+
+/* Progress */
+.prog-area{height:18px;display:flex;align-items:center;cursor:pointer;margin-bottom:8px}
+.prog-track{width:100%;height:2px;background:rgba(255,255,255,.17);border-radius:2px;position:relative;transition:height .12s}
+.prog-area:hover .prog-track{height:3px}
+.prog-buf{position:absolute;left:0;top:0;height:100%;background:rgba(255,255,255,.27);border-radius:2px;width:0;pointer-events:none}
+.prog-fill{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg,var(--bar),var(--bar2));border-radius:2px;width:0;pointer-events:none}
+.prog-dot{position:absolute;top:50%;left:0;width:9px;height:9px;border-radius:50%;background:var(--bar2);transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 0 4px rgba(94,207,176,.5);transition:transform .12s}
+.prog-area:hover .prog-dot{transform:translate(-50%,-50%) scale(1.55)}
+
+.ctrl-row{display:flex;align-items:center;justify-content: space-between;gap:8px}
+.ctrl-l,.ctrl-r{display:flex;align-items:center;gap:3px}
+
+.btn{width:32px;height:32px;background:none;border:none;color:rgba(255,255,255,.72);cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:color .14s,background .14s;position:relative;flex-shrink:0}
+.btn:hover{color:#fff;background:rgba(255,255,255,.07)}
+.btn svg{width:17px;height:17px}
+
+.time{font-size:10.5px;color:rgba(255,255,255,.58);letter-spacing:.2px;white-space:nowrap;user-select:none;font-weight:500;padding:0 4px}
+
+.vol-wrap{display:flex;align-items:center;gap:3px}
+input[type=range].vol{-webkit-appearance:none;width:56px;height:2px;background:rgba(255,255,255,.2);border-radius:2px;outline:none;cursor:pointer}
+input[type=range].vol::-webkit-slider-thumb{-webkit-appearance:none;width:9px;height:9px;border-radius:50%;background:#fff;cursor:pointer}
+
+/* Pill buttons (speed / dub / sub) */
+.pill-btn{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);color:rgba(255,255,255,.78);font-size:10px;font-weight:700;letter-spacing:.7px;padding:4px 9px;border-radius:3px;cursor:pointer;white-space:nowrap;text-transform:uppercase;transition:background .14s,border-color .14s;height:28px}
+.pill-btn:hover{background:rgba(94,207,176,.15);border-color:rgba(94,207,176,.35);color:#fff}
+.pill-btn svg{width:12px;height:12px;opacity:.7}
+.pill-btn.active{background:rgba(94,207,176,.18);border-color:rgba(94,207,176,.5);color:var(--bar2)}
+
+/* Popup menus */
+.popup{position:absolute;bottom:44px;background:rgba(12,12,12,.96);border:1px solid rgba(255,255,255,.1);border-radius:6px;min-width:130px;backdrop-filter:blur(8px);z-index:50;display:none;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.6)}
+.popup.open{display:block}
+.popup-header{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.35);padding:9px 14px 5px}
+.popup-item{padding:8px 14px;font-size:12px;color:rgba(255,255,255,.75);cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;transition:background .12s}
+.popup-item:hover{background:rgba(255,255,255,.06);color:#fff}
+.popup-item.selected{color:var(--bar2);font-weight:600}
+.popup-item.selected::after{content:'';width:5px;height:5px;border-radius:50%;background:var(--bar2);flex-shrink:0}
+.popup-divider{height:1px;background:rgba(255,255,255,.07);margin:3px 0}
+
+/* episode select */
+.ep-select{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);color:#fff;font-size:10px;font-weight:700;letter-spacing:.7px;padding:4px 8px;border-radius:3px;cursor:pointer;outline:none;text-transform:uppercase;height:28px}
+.ep-select option{background:#111;color:#fff}
+
+/* Watermark */
+.watermark{position:absolute;top:15px;left:17px;font-size:20px;font-weight:900;letter-spacing:2px;color:rgba(255,255,255,.88);pointer-events:none;user-select:none;transition:opacity .32s}
+.watermark span{color:var(--bar);font-size:15px}
+
+/* Loader */
+.loader{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:30;opacity:0;pointer-events:none;transition:opacity .2s}
+.loader.show{opacity:1}
+.spinner{width:34px;height:34px;border:2px solid rgba(255,255,255,.1);border-top-color:var(--bar);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Ripple */
+.ripple{position:absolute;top:50%;left:50%;width:70px;height:70px;border-radius:50%;background:rgba(94,207,176,.12);transform:translate(-50%,-50%) scale(0);pointer-events:none;animation:rip .4s ease-out forwards}
+@keyframes rip{to{transform:translate(-50%,-50%) scale(2.2);opacity:0}}
+
+/* Mobile */
+@media(max-width:500px){
+  .center{gap:28px}
+  .playbtn{width:52px;height:52px}
+  .skip svg{width:22px;height:22px}
+  input[type=range].vol{width:42px}
+  .pill-btn span{display:none}
+  .pill-btn{padding:4px 7px}
+}
+@media(max-width:380px){.vol-wrap{display:none}}
+</style>
+</head>
+<body>
+
+<div class="wrap" id="wrap">
+  <video id="video" preload="metadata" playsinline></video>
+  <div class="loader" id="loader"><div class="spinner"></div></div>
+  <div class="watermark" id="watermark">WOX<span>+</span></div>
+
+  <div class="overlay" id="overlay">
+
+    <!-- Center controls -->
+    <div class="center">
+      <button class="skip" onclick="skip(-10)">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V2L8 6l4 4V7c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6H4c0 4.4 3.6 8 8 8s8-3.6 8-8-3.6-8-8-8z"/></svg>
+        <span>10s</span>
+      </button>
+      <button class="playbtn" id="playBtn" onclick="togglePlay()">
+        <svg viewBox="0 0 24 24" fill="currentColor" id="playIcon" class="ico-play"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <button class="skip" onclick="skip(10)">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V2l4 4-4 4V7C8.7 7 6 9.7 6 13s2.7 6 6 6 6-2.7 6-6h2c0 4.4-3.6 8-8 8s-8-3.6-8-8 3.6-8 8-8z"/></svg>
+        <span>10s</span>
+      </button>
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="bottom">
+
+      <!-- Progress -->
+      <div class="prog-area" id="progArea">
+        <div class="prog-track" id="progTrack">
+          <div class="prog-buf" id="progBuf"></div>
+          <div class="prog-fill" id="progFill"></div>
+          <div class="prog-dot" id="progDot"></div>
+        </div>
+      </div>
+
+      <!-- Controls row -->
+      <div class="ctrl-row">
+
+        <div class="ctrl-l">
+          <!-- Vol -->
+          <div class="vol-wrap">
+            <button class="btn" onclick="toggleMute()">
+              <svg viewBox="0 0 24 24" fill="currentColor" id="volIcon"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.8-1-3.3-2.5-4.1v8.1c1.5-.7 2.5-2.2 2.5-4zm-2.5-9.9v2.1c2.9.9 5 3.6 5 6.8s-2.1 5.9-5 6.8v2.1c4-.9 7-4.5 7-8.9s-3-7.9-7-8.9z"/></svg>
+            </button>
+            <input type="range" class="vol" id="volSlider" min="0" max="1" step="0.02" value="1">
+          </div>
+          <span class="time" id="timeDisplay">0:00 / 0:00</span>
+        </div>
+
+        <div class="ctrl-r" style="gap:5px;flex-wrap:wrap;justify-content:flex-end">
+
+          <!-- Episode -->
+          <select class="ep-select" id="epSelect" onchange="loadEp(+this.value,true)">
+            <option value="0">Bölüm 1</option>
+            <option value="1">Bölüm 2</option>
+          </select>
+
+          <!-- Speed -->
+          <div style="position:relative">
+            <button class="pill-btn" id="speedBtn" onclick="togglePopup('speedPop',this)">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.38 8.57l-1.23 1.85a8 8 0 0 1-.22 7.58H5.07A8 8 0 0 1 15.58 6.85l1.85-1.23A10 10 0 0 0 3.35 19a2 2 0 0 0 1.72 1h13.85a2 2 0 0 0 1.74-1 10 10 0 0 0-.27-10.44zm-9.79 6.84a2 2 0 0 0 2.83 0l5.66-8.49-8.49 5.66a2 2 0 0 0 0 2.83z"/></svg>
+              <span id="speedLabel">1×</span>
+            </button>
+            <div class="popup" id="speedPop">
+              <div class="popup-header">Oynatma Hızı</div>
+              <div class="popup-item" data-speed="0.5" onclick="setSpeed(0.5,this)">0.5×</div>
+              <div class="popup-item" data-speed="0.75" onclick="setSpeed(0.75,this)">0.75×</div>
+              <div class="popup-item selected" data-speed="1" onclick="setSpeed(1,this)">1× <small style="opacity:.4;font-weight:400">Normal</small></div>
+              <div class="popup-item" data-speed="1.25" onclick="setSpeed(1.25,this)">1.25×</div>
+              <div class="popup-item" data-speed="1.5" onclick="setSpeed(1.5,this)">1.5×</div>
+              <div class="popup-item" data-speed="2" onclick="setSpeed(2,this)">2×</div>
+            </div>
+          </div>
+
+          <!-- Dubbing -->
+          <div style="position:relative">
+            <button class="pill-btn" id="dubBtn" onclick="togglePopup('dubPop',this)">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95a15.65 15.65 0 0 0-1.38-3.56A8.03 8.03 0 0 1 18.92 8zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2s.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56A7.987 7.987 0 0 1 5.08 16zm2.95-8H5.08a7.987 7.987 0 0 1 4.33-3.56A15.65 15.65 0 0 0 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2s.07-1.35.16-2h4.68c.09.65.16 1.32.16 2s-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a8.03 8.03 0 0 1-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2s-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z"/></svg>
+              <span id="dubLabel">Türkçe</span>
+            </button>
+            <div class="popup" id="dubPop">
+              <div class="popup-header">Dublaj / Ses</div>
+              <div class="popup-item selected" onclick="setDub('Türkçe',this)">Türkçe</div>
+              <div class="popup-item" onclick="setDub('İngilizce',this)">İngilizce</div>
+              <div class="popup-item" onclick="setDub('Almanca',this)">Almanca</div>
+              <div class="popup-item" onclick="setDub('Fransızca',this)">Fransızca</div>
+            </div>
+          </div>
+
+          <!-- Subtitles -->
+          <div style="position:relative">
+            <button class="pill-btn" id="subBtn" onclick="togglePopup('subPop',this)">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-6 9H6v-2h8v2zm4 0h-2v-2h2v2zm0-4H6V7h12v2z"/></svg>
+              <span id="subLabel">Kapalı</span>
+            </button>
+            <div class="popup" id="subPop">
+              <div class="popup-header">Altyazı</div>
+              <div class="popup-item selected" onclick="setSub('Kapalı',this)">Kapalı</div>
+              <div class="popup-divider"></div>
+              <div class="popup-item" onclick="setSub('Türkçe',this)">Türkçe</div>
+              <div class="popup-item" onclick="setSub('İngilizce',this)">İngilizce</div>
+              <div class="popup-item" onclick="setSub('Almanca',this)">Almanca</div>
+              <div class="popup-item" onclick="setSub('Fransızca',this)">Fransızca</div>
+              <div class="popup-item" onclick="setSub('İspanyolca',this)">İspanyolca</div>
+            </div>
+          </div>
+
+          <!-- Fullscreen -->
+          <button class="btn" onclick="toggleFs()">
+            <svg viewBox="0 0 24 24" fill="currentColor" id="fsIcon"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </div><!-- /overlay -->
+</div>
+
+<script>
+const episodes=[
+  {src:"https://tnow-prod-apac.367791ca7abea81096902b345fee7b1f.r2.cloudflarestorage.com/2026-03-18/e46a4d2d77ca42d1b8f8a8e02c4b595e/20260318UZqjVxzd/WdmNzv/NetMirror%20-%20Watch%20Movies%20and%20Series.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=93fd9b267a76629d0d45d440657ea9d9%2F20260318%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20260318T232249Z&X-Amz-Expires=43200&X-Amz-Signature=6a96ee3aa65bae316a4df3284e45f4037c0af5a9793756a19876978b67d9a5c8&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3D%22NetMirror%20-%20Watch%20Movies%20and%20Series.mp4%22&x-amz-checksum-mode=ENABLED&x-id=GetObject"},
+  {src:"https://tnow-prod-apac.367791ca7abea81096902b345fee7b1f.r2.cloudflarestorage.com/2026-03-18/e46a4d2d77ca42d1b8f8a8e02c4b595e/20260318UZqjVxzd/WdmNzv/NetMirror%20-%20Watch%20Movies%20and%20Series.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=93fd9b267a76629d0d45d440657ea9d9%2F20260318%2Fauto%2Fs3%2Faws4_request&X-Amz-Date=20260318T232249Z&X-Amz-Expires=43200&X-Amz-Signature=6a96ee3aa65bae316a4df3284e45f4037c0af5a9793756a19876978b67d9a5c8&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3D%22NetMirror%20-%20Watch%20Movies%20and%20Series.mp4%22&x-amz-checksum-mode=ENABLED&x-id=GetObject"}
+];
+
+const video=document.getElementById('video');
+const overlay=document.getElementById('overlay');
+const watermark=document.getElementById('watermark');
+const loader=document.getElementById('loader');
+const playIcon=document.getElementById('playIcon');
+const progFill=document.getElementById('progFill');
+const progBuf=document.getElementById('progBuf');
+const progDot=document.getElementById('progDot');
+const progArea=document.getElementById('progArea');
+const progTrack=document.getElementById('progTrack');
+const timeDisplay=document.getElementById('timeDisplay');
+const volSlider=document.getElementById('volSlider');
+const volIcon=document.getElementById('volIcon');
+const epSelect=document.getElementById('epSelect');
+const fsIcon=document.getElementById('fsIcon');
+const wrap=document.getElementById('wrap');
+
+let currentEp=0,playing=false,hideTimer=null,dragging=false;
+let openPopup=null;
+
+// ── Episode ──
+function loadEp(idx,autoPlay){
+  currentEp=idx;video.src=episodes[idx].src;video.load();
+  epSelect.value=idx;setPlaying(false);
+  if(autoPlay) video.play().catch(()=>{});
+}
+
+// ── Play ──
+function togglePlay(){video.paused?video.play().catch(()=>{}):video.pause()}
+function setPlaying(v){
+  playing=v;
+  playIcon.innerHTML=v?'<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>':'<path d="M8 5v14l11-7z"/>';
+  playIcon.style.marginLeft=v?'0':'3px';
+}
+
+// ── Skip ──
+function skip(s){
+  video.currentTime=Math.max(0,Math.min(video.duration||0,video.currentTime+s));
+  const r=document.createElement('div');r.className='ripple';wrap.appendChild(r);setTimeout(()=>r.remove(),440);
+}
+
+// ── Speed ──
+function setSpeed(val,el){
+  video.playbackRate=val;
+  document.getElementById('speedLabel').textContent=val+'×';
+  document.querySelectorAll('#speedPop .popup-item').forEach(i=>i.classList.remove('selected'));
+  el.classList.add('selected');
+  closePopups();
+}
+
+// ── Dubbing (UI only) ──
+function setDub(label,el){
+  document.getElementById('dubLabel').textContent=label;
+  document.querySelectorAll('#dubPop .popup-item').forEach(i=>i.classList.remove('selected'));
+  el.classList.add('selected');
+  closePopups();
+}
+
+// ── Subtitle (UI only) ──
+function setSub(label,el){
+  document.getElementById('subLabel').textContent=label;
+  document.getElementById('subBtn').classList.toggle('active',label!=='Kapalı');
+  document.querySelectorAll('#subPop .popup-item').forEach(i=>i.classList.remove('selected'));
+  el.classList.add('selected');
+  closePopups();
+}
+
+// ── Popups ──
+function togglePopup(id,btn){
+  const pop=document.getElementById(id);
+  const isOpen=pop.classList.contains('open');
+  closePopups();
+  if(!isOpen){
+    pop.classList.add('open');
+    openPopup=pop;
+    // right-align if near edge
+    const btnRect=btn.getBoundingClientRect();
+    const right=window.innerWidth-btnRect.right;
+    pop.style.right=right<150?'0':'auto';
+    pop.style.left=right>=150?'0':'auto';
+    pop.style.bottom='36px';
+  }
+}
+
+function closePopups(){
+  document.querySelectorAll('.popup.open').forEach(p=>p.classList.remove('open'));
+  openPopup=null;
+}
+
+wrap.addEventListener('click',e=>{
+  if(!e.target.closest('.pill-btn')&&!e.target.closest('.popup')) closePopups();
+});
+
+// ── Progress ──
+function fmt(s){
+  if(isNaN(s)||s===Infinity) return'0:00';
+  return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+}
+function updateProgress(){
+  if(!video.duration||dragging) return;
+  const p=video.currentTime/video.duration;
+  progFill.style.width=(p*100)+'%';
+  progDot.style.left=(p*100)+'%';
+  timeDisplay.textContent=fmt(video.currentTime)+' / '+fmt(video.duration);
+  if(video.buffered.length)
+    progBuf.style.width=(video.buffered.end(video.buffered.length-1)/video.duration*100)+'%';
+}
+function seekAt(e){
+  const rect=progTrack.getBoundingClientRect();
+  const x=e.touches?e.touches[0].clientX:e.clientX;
+  const p=Math.max(0,Math.min(1,(x-rect.left)/rect.width));
+  video.currentTime=p*(video.duration||0);
+  progFill.style.width=(p*100)+'%';
+  progDot.style.left=(p*100)+'%';
+}
+progArea.addEventListener('mousedown',e=>{dragging=true;seekAt(e)});
+progArea.addEventListener('touchstart',e=>{dragging=true;seekAt(e)},{passive:true});
+window.addEventListener('mousemove',e=>{if(dragging)seekAt(e)});
+window.addEventListener('touchmove',e=>{if(dragging)seekAt(e)},{passive:true});
+window.addEventListener('mouseup',()=>dragging=false);
+window.addEventListener('touchend',()=>dragging=false);
+
+// ── Volume ──
+volSlider.addEventListener('input',()=>{video.volume=volSlider.value;video.muted=+volSlider.value===0;updateVolIcon()});
+function toggleMute(){video.muted=!video.muted;volSlider.value=video.muted?0:video.volume||1;updateVolIcon()}
+function updateVolIcon(){
+  const m=video.muted||+volSlider.value===0;
+  volIcon.innerHTML=m
+    ?'<path d="M16.5 12c0-1.8-1-3.3-2.5-4.1v2.4l2.4 2.4c.1-.2.1-.5.1-.7zm2.5 0c0 .9-.2 1.8-.5 2.6l1.5 1.5c.7-1.2 1-2.6 1-4.1 0-4.4-3-7.9-7-8.9v2.1c2.9.9 5 3.6 5 6.8zM4.3 3L3 4.3 7.7 9H3v6h4l5 5v-6.7l4.3 4.3c-.7.5-1.4.9-2.3 1.2v2.1c1.4-.4 2.6-1.1 3.7-2l2 2L21 19.7 4.3 3zM12 4L9.9 6.1 12 8.2V4z"/>'
+    :'<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.8-1-3.3-2.5-4.1v8.1c1.5-.7 2.5-2.2 2.5-4zm-2.5-9.9v2.1c2.9.9 5 3.6 5 6.8s-2.1 5.9-5 6.8v2.1c4-.9 7-4.5 7-8.9s-3-7.9-7-8.9z"/>';
+}
+
+// ── UI hide ──
+function showUI(){
+  overlay.classList.remove('hidden');
+  watermark.style.opacity='1';
+  clearTimeout(hideTimer);
+  if(playing) hideTimer=setTimeout(()=>{
+    if(!openPopup){overlay.classList.add('hidden');watermark.style.opacity='0';}
+    else hideTimer=setTimeout(arguments.callee,2000);
+  },3000);
+}
+wrap.addEventListener('mousemove',showUI);
+wrap.addEventListener('touchstart',()=>{
+  overlay.classList.contains('hidden')?showUI():togglePlay();
+},{passive:true});
+
+// ── Fullscreen ──
+function toggleFs(){
+  !document.fullscreenElement?wrap.requestFullscreen&&wrap.requestFullscreen():document.exitFullscreen&&document.exitFullscreen();
+}
+document.addEventListener('fullscreenchange',()=>{
+  fsIcon.innerHTML=document.fullscreenElement
+    ?'<path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>'
+    :'<path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>';
+});
+
+// ── Keyboard ──
+document.addEventListener('keydown',e=>{
+  if(['INPUT','SELECT'].includes(e.target.tagName)) return;
+  if(e.code==='Space'){e.preventDefault();togglePlay()}
+  if(e.code==='ArrowRight') skip(10);
+  if(e.code==='ArrowLeft') skip(-10);
+  if(e.code==='KeyF') toggleFs();
+  if(e.code==='KeyM') toggleMute();
+});
+
+// ── Video events ──
+video.addEventListener('play',()=>{setPlaying(true);loader.classList.remove('show');hideTimer=setTimeout(()=>{overlay.classList.add('hidden');watermark.style.opacity='0';},2500)});
+video.addEventListener('pause',()=>{setPlaying(false);clearTimeout(hideTimer);showUI()});
+video.addEventListener('waiting',()=>loader.classList.add('show'));
+video.addEventListener('canplay',()=>loader.classList.remove('show'));
+video.addEventListener('timeupdate',updateProgress);
+video.addEventListener('ended',()=>{if(currentEp<episodes.length-1)loadEp(currentEp+1,true)});
+
+loadEp(0,false);showUI();
+</script>
+</body>
+</html>
