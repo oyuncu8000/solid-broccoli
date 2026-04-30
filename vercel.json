@@ -1,10 +1,7 @@
 {
   "version": 2,
   "functions": {
-    "video/*.php": {
-      "runtime": "vercel-php@0.7.1"
-    },
-    "api/*.php": {
+    "**/*.php": {
       "runtime": "vercel-php@0.7.1"
     }
   },
@@ -18,7 +15,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/index.tsx"
+      "dest": "/index.html"
     }
   ]
 }
