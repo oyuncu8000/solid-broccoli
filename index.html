@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title><?= $page_title ?></title>
+<title>WOX+ | Streaming</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 :root {
@@ -844,11 +843,11 @@ footer strong {
     </div>
     <p id="hero-desc">Cesur maceraperest Flap Jack ve kaptanı Knuckles ile birlikte maceralı bir deniz yolculuğuna çıkın. Komedi ve aksiyon dolu Cartoon Network klasiği.</p>
     <div class="hero-buttons">
-      <button class="btn-play" onclick="openContent('flapjack')">
+      <button class="btn-play" onclick="openContent('flap')">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="white"><path d="M3 2l10 6-10 6z"/></svg>
         İzle
       </button>
-      <button class="btn-info" onclick="toggleWatchlist('flapjack', event)">+ Listeme Ekle</button>
+      <button class="btn-info" onclick="toggleWatchlist('flap', event)">+ Listeme Ekle</button>
     </div>
   </div>
 </section>
@@ -983,7 +982,7 @@ footer strong {
   </section>
 </div>
 
-<footer>© <?= date('Y') ?> <strong>WOX+</strong> — Bu bir demo projedir.</footer>
+<footer>© <span id="footer-year"></span> <strong>WOX+</strong> — Bu bir demo projedir.</footer>
 
 <!-- NOTIFICATION -->
 <div class="notif" id="notif"></div>
@@ -1250,7 +1249,8 @@ function openContent(id) {
   localStorage.setItem('wox_continue', JSON.stringify(continueWatch));
   renderAll();
   loadAIBestToday();
-  window.open(`/video/${id}.php`, '_blank');
+  // Vercel'de çalışacak şekilde - içerik sayfasına yönlendir (PHP yerine HTML)
+  window.location.href = `/video/${id}`;
 }
 
 function showNotif(msg, success = false) {
@@ -1419,6 +1419,10 @@ async function callAI(messages, systemPrompt) {
 }
 
 window.onload = () => {
+  // Footer yılını dinamik yaz
+  const fy = document.getElementById('footer-year');
+  if (fy) fy.textContent = new Date().getFullYear();
+
   renderAll();
   loadAIBestToday();
   window.addEventListener('scroll', () => {
