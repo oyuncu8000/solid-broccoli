@@ -1,17 +1,14 @@
 {
   "version": 2,
   "functions": {
-    "video/*.php": {
-      "runtime": "vercel-php@0.7.1"
-    },
-    "api/*.php": {
+    "api/**/*.php": {
       "runtime": "vercel-php@0.7.1"
     }
   },
   "routes": [
     {
-      "src": "/video/(.*).php",
-      "dest": "/video/$1.php"
+      "src": "/api/(.*).php",
+      "dest": "/api/$1.php"
     },
     {
       "handle": "filesystem"

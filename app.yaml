@@ -1,0 +1,10 @@
+name: woxplus
+app_id: da_n73IatAUGWLp
+owner: dot644971
+package: .
+volumes:
+- name: data
+  mount: /app/data
+scaling:
+  mode: single_concurrency
+kind: wasmer.io/App.v0
