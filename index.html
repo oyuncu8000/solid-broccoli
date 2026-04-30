@@ -1,0 +1,1430 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title><?= $page_title ?></title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:       #080810;
+  --bg2:      #0e0e18;
+  --bg3:      #13131f;
+  --bg4:      #1a1a28;
+  --bg5:      #22222f;
+  --border:   rgba(255,255,255,0.07);
+  --border2:  rgba(255,255,255,0.13);
+  --accent:   #e8181e;
+  --accent2:  #f0b429;
+  --accent3:  #8b5cf6;
+  --text:     #f0f0f5;
+  --text2:    #9898aa;
+  --text3:    #44445a;
+  --white:    #ffffff;
+  --card-r:   10px;
+  --ease:     cubic-bezier(0.22, 1, 0.36, 1);
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-body: 'Outfit', sans-serif;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Subtle background texture */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background-image:
+    url("https://yourfiles.cloud/uploads/e4afdae7eefbfe5254e393f8bec781fd/Ads%C4%B1z%20tasar%C4%B1m%20%281%29.png");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.72;
+  pointer-events:none;
+  z-index:0;
+}
+
+::-webkit-scrollbar { width:4px; height:4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg5); border-radius:4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ───────── NAVBAR ───────── */
+.navbar {
+  position:fixed; top:0; left:0; right:0; z-index:1000;
+  height:62px;
+  padding: 0 48px;
+  display:flex; align-items:center; justify-content:space-between;
+  transition: background 0.4s ease, border-color 0.4s ease;
+}
+.navbar.solid {
+  background: rgba(8,8,16,0.95);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border-bottom: 1px solid var(--border);
+}
+/* ───────── LOGO IMAGE ───────── */
+.nav-logo {
+  display:flex; align-items:center;
+  text-decoration:none;
+  height: 38px;
+}
+.nav-logo img {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  /* Şu an placeholder — gerçek logo URL'sini buraya girin */
+}
+/* Fallback metin: resim yüklenemezse görünür */
+.nav-logo-fallback {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  font-weight: 400;
+  color: var(--white);
+  letter-spacing: 2px;
+  display: none;
+}
+.nav-logo-fallback span { color: var(--accent); }
+
+.nav-links { display:flex; gap:2px; align-items:center; }
+.nav-link {
+  color: var(--text2);
+  text-decoration:none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+  letter-spacing: 0.3px;
+}
+.nav-link:hover { color: var(--text); background: rgba(255,255,255,0.06); }
+.nav-right { display:flex; align-items:center; gap:10px; }
+
+.ai-nav-btn {
+  background: transparent;
+  border: 1px solid rgba(139,92,246,0.4);
+  color: #c4b5fd;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 7px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.25s;
+  display:flex; align-items:center; gap:7px;
+}
+.ai-nav-btn:hover {
+  background: rgba(139,92,246,0.1);
+  border-color: rgba(139,92,246,0.7);
+  color: #e9d5ff;
+}
+.ai-nav-btn-dot {
+  width:6px; height:6px;
+  border-radius:50%;
+  background: #8b5cf6;
+  animation: pulse-dot 2.4s ease infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:0.4; transform:scale(0.7); }
+}
+
+.nav-btn {
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 7px 18px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+.nav-btn:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.22); }
+
+/* ───────── HERO ───────── */
+.hero {
+  position:relative;
+  height: 88vh; min-height:560px;
+  display:flex; align-items:flex-end;
+  overflow:hidden;
+}
+.hero-backdrop {
+  position:absolute; inset:0;
+  background-size:cover;
+  background-position:center top;
+  transform:scale(1.06);
+  animation: heroZoom 22s ease-in-out infinite alternate;
+}
+@keyframes heroZoom {
+  from { transform:scale(1.06); }
+  to   { transform:scale(1.12); }
+}
+.hero-gradient {
+  position:absolute; inset:0;
+  background:
+    linear-gradient(to right, rgba(8,8,16,0.96) 0%, rgba(8,8,16,0.55) 52%, transparent 100%),
+    linear-gradient(to top,   rgba(8,8,16,1)    0%, rgba(8,8,16,0.5)  40%, transparent 68%);
+}
+.hero-vignette {
+  position:absolute; inset:0;
+  box-shadow: inset 0 0 120px rgba(8,8,16,0.5);
+  pointer-events:none;
+}
+.hero-content {
+  position:relative; z-index:2;
+  padding: 0 52px 92px;
+  max-width: 580px;
+}
+.hero-label {
+  display:inline-flex; align-items:center; gap:8px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.hero-label-line {
+  width: 28px; height: 1.5px;
+  background: var(--accent);
+}
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 400;
+  line-height: 1.0;
+  margin-bottom: 16px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.hero-meta {
+  display:flex; gap:14px; margin-bottom:18px;
+  font-size: 0.85rem; align-items:center;
+}
+.hero-rating { color: var(--accent2); font-weight: 600; display:flex; align-items:center; gap:4px; }
+.hero-year { color: var(--text2); }
+.age-tag {
+  background: rgba(255,255,255,0.08);
+  padding: 3px 9px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  border: 1px solid rgba(255,255,255,0.1);
+  letter-spacing: 0.5px;
+}
+.hero p {
+  color: var(--text2);
+  line-height: 1.72;
+  margin-bottom: 28px;
+  font-size: 0.9rem;
+  max-width: 440px;
+  font-weight: 300;
+}
+.hero-buttons { display:flex; gap:12px; flex-wrap:wrap; }
+
+.btn-play {
+  background: var(--accent);
+  border: none;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 12px 32px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.25s var(--ease);
+  display:flex; align-items:center; gap:9px;
+  letter-spacing: 0.5px;
+}
+.btn-play:hover {
+  background: #c8141a;
+  transform: scale(1.04) translateY(-1px);
+  box-shadow: 0 10px 28px rgba(232,24,30,0.3);
+}
+.btn-play svg { transition: transform 0.2s; }
+.btn-play:hover svg { transform: scale(1.12); }
+
+.btn-info {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  font-weight: 500;
+  padding: 12px 28px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.22s;
+  letter-spacing: 0.3px;
+}
+.btn-info:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.28);
+}
+
+/* ───────── TABS ───────── */
+.tabs {
+  padding: 28px 52px 0;
+  display:flex; gap:4px;
+  position:relative;
+}
+.tabs::after {
+  content:'';
+  position:absolute; bottom:0; left:52px; right:52px;
+  height:1px;
+  background: var(--border);
+}
+.tab {
+  background: transparent;
+  border: none;
+  color: var(--text3);
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  font-weight: 500;
+  padding: 9px 18px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  margin-bottom: -1px;
+  position:relative; z-index:1;
+  border-radius: 6px 6px 0 0;
+  letter-spacing: 0.2px;
+}
+.tab:hover { color: var(--text2); background: rgba(255,255,255,0.03); }
+.tab.active { color: var(--white); border-bottom-color: var(--accent); font-weight:600; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+
+/* ───────── SECTIONS ───────── */
+.section { padding: 48px 52px 16px; position:relative; z-index:1; }
+.section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; }
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 400;
+  letter-spacing: 1.5px;
+  display:flex; align-items:center; gap:10px;
+  text-transform: uppercase;
+}
+.section-title-accent { color: var(--accent); font-size: 0.8em; }
+.section + .section { border-top: 1px solid var(--border); }
+
+/* ───────── AI POWERED SECTION BADGE ───────── */
+.ai-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:0.68rem; font-weight:600;
+  letter-spacing:1.5px; text-transform:uppercase;
+  color:#a78bfa;
+  background: rgba(139,92,246,0.08);
+  border: 1px solid rgba(139,92,246,0.2);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+.ai-badge-dot {
+  width:5px; height:5px;
+  border-radius:50%;
+  background:#8b5cf6;
+  animation: pulse-dot 2.4s ease infinite;
+}
+
+/* ───────── TREND BADGE ───────── */
+.trend-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:0.68rem; font-weight:600;
+  letter-spacing:1.5px; text-transform:uppercase;
+  color:#f0b429;
+  background: rgba(240,180,41,0.08);
+  border: 1px solid rgba(240,180,41,0.2);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+.trend-badge-icon { font-size:0.75rem; }
+
+/* ───────── RANK BADGE ON CARDS ───────── */
+.card-rank {
+  position:absolute; bottom:8px; left:10px;
+  font-family: var(--font-display);
+  font-size:2.4rem; font-weight:400;
+  color:rgba(255,255,255,0.08);
+  line-height:1;
+  z-index:5;
+  letter-spacing:1px;
+  pointer-events:none;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+  transition: color 0.3s;
+}
+.content-card:hover .card-rank { color:rgba(240,180,41,0.22); }
+
+/* ───────── AI BEST TODAY CARD GLOW ───────── */
+.section-ai-glow .content-card-inner {
+  border-color: rgba(139,92,246,0.12);
+}
+.section-ai-glow .content-card:hover .content-card-inner {
+  box-shadow: 0 28px 52px rgba(0,0,0,0.7), 0 0 0 1px rgba(139,92,246,0.18);
+}
+
+/* ───────── SLIDER ───────── */
+.slider-container { position:relative; }
+.slider-wrapper {
+  overflow-x:scroll; overflow-y:visible;
+  padding: 14px 4px 22px;
+  scroll-behavior:smooth;
+  scrollbar-width:none;
+}
+.slider-wrapper::-webkit-scrollbar { display:none; }
+.slider { display:flex; gap:14px; width:max-content; }
+
+/* ───────── CONTENT CARD ───────── */
+.content-card {
+  flex: 0 0 242px;
+  position:relative;
+  cursor:pointer;
+  border-radius: var(--card-r);
+  overflow:visible;
+  background: var(--bg3);
+  transition: all 0.4s var(--ease);
+}
+.content-card-inner {
+  border-radius: var(--card-r);
+  overflow:hidden;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  transition: all 0.45s var(--ease);
+  background: var(--bg3);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.content-card:hover .content-card-inner {
+  transform: scale(1.07) translateY(-10px);
+  box-shadow: 0 28px 52px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08);
+  z-index:30;
+}
+.content-card-thumb { height: 340px; overflow:hidden; position:relative; }
+.content-card-thumb img {
+  width:100%; height:100%; object-fit:cover;
+  transition: transform 0.5s ease;
+  display:block;
+}
+.content-card:hover .content-card-thumb img { transform:scale(1.1); }
+
+.content-card-info {
+  position:absolute; bottom:0; left:0; right:0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.94) 60%);
+  padding: 44px 14px 14px;
+  opacity:0; transform:translateY(12px);
+  transition: all 0.3s ease;
+  border-radius: 0 0 var(--card-r) var(--card-r);
+}
+.content-card:hover .content-card-info { opacity:1; transform:translateY(0); }
+.content-card-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 400;
+  letter-spacing: 1px;
+  margin-bottom: 7px;
+  text-transform: uppercase;
+}
+.content-card-meta { display:flex; align-items:center; gap:8px; font-size:0.78rem; }
+.lang-tag { color: var(--accent2); font-weight:500; font-size:0.78rem; }
+
+.card-wl-btn {
+  position:absolute; top:10px; right:10px;
+  width:32px; height:32px;
+  border-radius:50%;
+  background: rgba(0,0,0,0.7);
+  border: 1.5px solid rgba(255,255,255,0.45);
+  color:#fff; font-size:17px; line-height:1;
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition: all 0.2s;
+  z-index:50; padding:0;
+  font-family: var(--font-body);
+  backdrop-filter: blur(6px);
+}
+.card-wl-btn:hover { background: var(--accent); border-color: var(--accent); transform:scale(1.1); }
+.card-wl-btn.in-list { background: var(--accent); border-color: var(--accent); }
+
+.card-progress {
+  position:absolute; bottom:0; left:0; right:0;
+  height:3px; background: rgba(255,255,255,0.08);
+  border-radius: 0 0 var(--card-r) var(--card-r);
+  overflow:hidden;
+}
+.card-progress-fill { height:100%; background: var(--accent); border-radius:0 2px 2px 0; }
+
+/* ───────── SLIDER NAV ───────── */
+.slider-nav {
+  position:absolute; top:50%;
+  transform: translateY(-50%);
+  width:42px; height:42px;
+  background: var(--bg4);
+  border: 1px solid var(--border2);
+  color:white; font-size:22px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:50%;
+  cursor:pointer; z-index:40;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.55);
+  padding:0; line-height:1;
+  font-family: var(--font-body);
+}
+.slider-nav:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-50%) scale(1.1);
+}
+.slider-nav.left  { left:-12px; }
+.slider-nav.right { right:-12px; }
+
+/* ───────── WATCHLIST GRID ───────── */
+.wl-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px; }
+.wl-empty {
+  text-align:center; padding:80px 20px;
+  color: var(--text3);
+}
+.wl-empty .wl-empty-icon { font-size:2.5rem; margin-bottom:14px; opacity:0.3; }
+.wl-empty p { font-size:0.88rem; line-height:1.75; font-weight:300; }
+
+/* ───────── AI PANEL ───────── */
+.ai-overlay {
+  position:fixed; inset:0;
+  background: rgba(0,0,0,0.72);
+  z-index:2000;
+  display:none; align-items:flex-end; justify-content:center;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: fadeIn 0.25s ease;
+}
+.ai-overlay.open { display:flex; }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+.ai-panel {
+  width:100%; max-width:760px;
+  margin: 0 auto 24px;
+  background: var(--bg2);
+  border: 1px solid rgba(139,92,246,0.18);
+  border-radius: 14px;
+  padding: 26px 26px 22px;
+  box-shadow: 0 36px 90px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.03) inset;
+  animation: slideUp 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+  max-height: 78vh;
+  overflow:hidden; display:flex; flex-direction:column;
+}
+@keyframes slideUp {
+  from { transform:translateY(36px); opacity:0; }
+  to   { transform:translateY(0);    opacity:1; }
+}
+
+.ai-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:18px;
+}
+.ai-header-left { display:flex; align-items:center; gap:11px; }
+.ai-logo {
+  width:36px; height:36px;
+  background: rgba(139,92,246,0.12);
+  border: 1px solid rgba(139,92,246,0.25);
+  border-radius: 9px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1rem; color:#c4b5fd;
+}
+.ai-header-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem; font-weight:400;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.ai-header-sub { font-size:0.72rem; color:var(--text3); margin-top:2px; letter-spacing:0.3px; }
+
+.ai-close-btn {
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  width:30px; height:30px;
+  border-radius:50%;
+  cursor:pointer; font-size:14px;
+  display:flex; align-items:center; justify-content:center;
+  transition: all 0.2s;
+  font-family: var(--font-body);
+}
+.ai-close-btn:hover { background: var(--bg5); color:white; }
+
+.ai-mood-section { margin-bottom:16px; }
+.ai-mood-label {
+  font-size:0.68rem; color:var(--text3); margin-bottom:9px;
+  text-transform:uppercase; letter-spacing:1.5px; font-weight:600;
+}
+.ai-mood-chips { display:flex; gap:7px; flex-wrap:wrap; }
+.mood-chip {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  font-family: var(--font-body);
+  font-size: 0.78rem; font-weight:500;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor:pointer; transition: all 0.2s;
+  letter-spacing: 0.2px;
+}
+.mood-chip:hover {
+  background: rgba(139,92,246,0.08);
+  border-color: rgba(139,92,246,0.32);
+  color: #c4b5fd;
+}
+.mood-chip.active {
+  background: rgba(139,92,246,0.14);
+  border-color: rgba(139,92,246,0.45);
+  color: #e9d5ff;
+}
+
+.ai-messages {
+  flex:1; overflow-y:auto;
+  margin-bottom:14px;
+  display:flex; flex-direction:column; gap:10px;
+  max-height:280px; padding-right:4px;
+  scrollbar-width:thin;
+  scrollbar-color: rgba(139,92,246,0.25) transparent;
+}
+.ai-msg {
+  padding: 12px 15px;
+  border-radius:10px;
+  font-size:0.87rem; line-height:1.7;
+  animation: msgFadeIn 0.28s ease;
+  font-weight: 300;
+}
+@keyframes msgFadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.ai-msg.assistant {
+  background: rgba(139,92,246,0.07);
+  border: 1px solid rgba(139,92,246,0.13);
+  border-radius: 10px 10px 10px 3px;
+  color: var(--text);
+}
+.ai-msg.user {
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  border-radius: 10px 10px 3px 10px;
+  color: var(--text2);
+  align-self:flex-end; max-width:80%;
+}
+.ai-msg.thinking {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text3);
+}
+.ai-typing { display:flex; gap:5px; align-items:center; padding:3px 0; }
+.ai-typing-dot {
+  width:6px; height:6px;
+  border-radius:50%; background:#8b5cf6;
+  animation: typingBounce 1.2s infinite;
+}
+.ai-typing-dot:nth-child(2) { animation-delay:0.2s; }
+.ai-typing-dot:nth-child(3) { animation-delay:0.4s; }
+@keyframes typingBounce {
+  0%,60%,100% { transform:translateY(0); opacity:0.35; }
+  30%          { transform:translateY(-7px); opacity:1; }
+}
+
+.ai-suggestions { display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }
+.ai-suggestion-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 11px;
+  cursor:pointer; transition: all 0.2s;
+  display:flex; align-items:center; gap:9px;
+  font-size:0.82rem;
+}
+.ai-suggestion-card:hover {
+  background: rgba(139,92,246,0.09);
+  border-color: rgba(139,92,246,0.28);
+}
+.ai-suggestion-card img { width:32px; height:46px; border-radius:4px; object-fit:cover; }
+
+.ai-input-row { display:flex; gap:8px; align-items:flex-end; }
+.ai-input {
+  flex:1;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 300;
+  padding: 11px 15px;
+  border-radius: 8px;
+  resize:none; outline:none;
+  transition: border-color 0.2s;
+  max-height:96px;
+}
+.ai-input:focus {
+  border-color: rgba(139,92,246,0.4);
+  background: var(--bg4);
+}
+.ai-input::placeholder { color:var(--text3); }
+.ai-send-btn {
+  background: rgba(139,92,246,0.12);
+  border: 1px solid rgba(139,92,246,0.35);
+  color: #c4b5fd;
+  font-family: var(--font-body);
+  font-size: 0.82rem; font-weight:600;
+  padding: 11px 20px;
+  border-radius: 8px;
+  cursor:pointer; transition: all 0.2s;
+  white-space:nowrap;
+  letter-spacing: 0.4px;
+}
+.ai-send-btn:hover {
+  background: rgba(139,92,246,0.22);
+  border-color: rgba(139,92,246,0.55);
+  color:#e9d5ff;
+}
+.ai-send-btn:disabled { opacity:0.35; cursor:not-allowed; }
+
+/* ───────── NOTIF ───────── */
+.notif {
+  position:fixed; top:76px; right:20px;
+  background: var(--bg3);
+  padding: 12px 18px;
+  border-radius: 8px;
+  border-left: 3px solid var(--accent);
+  border-top: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  z-index:3000;
+  opacity:0; transform:translateY(-8px);
+  transition: all 0.28s ease;
+  font-size:0.84rem; font-weight:500;
+  max-width:260px; pointer-events:none;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.45);
+  letter-spacing: 0.2px;
+}
+.notif.show { opacity:1; transform:translateY(0); }
+
+/* ───────── AI SKELETON LOADER ───────── */
+.skeleton-card {
+  flex: 0 0 242px;
+  border-radius: var(--card-r);
+  overflow:hidden;
+  background: var(--bg3);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.skeleton-thumb {
+  height:340px;
+  background: linear-gradient(90deg, var(--bg3) 25%, var(--bg4) 50%, var(--bg3) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s infinite;
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ───────── FOOTER ───────── */
+footer {
+  padding: 50px 52px;
+  text-align:center;
+  color: var(--text3);
+  font-size: 0.78rem;
+  border-top: 1px solid var(--border);
+  margin-top:40px;
+  letter-spacing: 0.5px;
+  font-weight: 300;
+  position: relative; z-index:1;
+}
+footer strong {
+  font-family: var(--font-display);
+  letter-spacing: 2px;
+  color: var(--text2);
+}
+
+/* ───────── RESPONSIVE ───────── */
+@media (max-width: 992px) {
+  .content-card { flex: 0 0 210px; }
+  .content-card-thumb { height:300px; }
+  .navbar { padding:0 24px; }
+  .nav-links { display:none; }
+  .section { padding:36px 24px 10px; }
+  .tabs { padding:20px 24px 0; }
+  .tabs::after { left:24px; right:24px; }
+  /* Logo boyutunu tablette biraz küçült */
+  .nav-logo img { height: 32px; }
+}
+
+/* ───────── MOBİL KART KÜÇÜLTME ───────── */
+@media (max-width: 768px) {
+  .hero-content { padding:0 20px 56px; }
+
+  /* Kartlar mobilde küçük */
+  .content-card { flex: 0 0 120px; }
+  .content-card-thumb { height: 172px; }
+  .content-card-title { font-size: 0.78rem; letter-spacing: 0.5px; }
+  .content-card-meta { gap: 4px; font-size: 0.65rem; }
+  .age-tag { font-size: 0.6rem; padding: 2px 6px; }
+  .lang-tag { font-size: 0.6rem; }
+  .content-card-info { padding: 28px 8px 8px; }
+  .card-wl-btn { width:24px; height:24px; font-size:13px; top:6px; right:6px; }
+  .card-rank { font-size: 1.6rem; bottom: 5px; left: 6px; }
+
+  /* Skeleton mobilde küçük */
+  .skeleton-card { flex: 0 0 120px; }
+  .skeleton-thumb { height: 172px; }
+
+  /* Slider gap azalt */
+  .slider { gap: 8px; }
+
+  .slider-nav { width:30px; height:30px; font-size:16px; }
+  .slider-nav.left  { left:2px; }
+  .slider-nav.right { right:2px; }
+
+  /* Logo mobilde küçük */
+  .nav-logo img { height: 28px; }
+
+  .ai-panel { margin:0 8px 12px; padding:18px 14px 16px; }
+}
+
+@media (max-width: 480px) {
+  /* Çok küçük ekranlar için biraz daha kompakt */
+  .content-card { flex: 0 0 105px; }
+  .content-card-thumb { height: 152px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <!-- LOGO: img src'yi gerçek logo URL'nizle değiştirin -->
+  <a href="https://woxplus.com/dashboard/#" class="nav-logo">
+    <img
+      src="https://cdn.prod.website-files.com/69dea01ac50b3af2941507a6/69e25323b982d75eb8544b42_WOXPLUS_LOGO.png"
+      alt="WOX+"
+      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+    >
+    <!-- Resim yüklenemezse fallback metin logosu -->
+    <span class="nav-logo-fallback">WOX<span>+</span></span>
+  </a>
+  <div class="nav-links">
+    <a href="#" class="nav-link">Ana Sayfa</a>
+    <a href="#" class="nav-link">Filmler</a>
+    <a href="#" class="nav-link">Diziler</a>
+    <a href="#" class="nav-link">Çocuklar</a>
+  </div>
+  <div class="nav-right">
+    <button class="ai-nav-btn" onclick="toggleAI()">
+      <div class="ai-nav-btn-dot"></div>
+      WOX AI
+    </button>
+    <button class="nav-btn">Giriş Yap</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-backdrop" id="hero-backdrop" style="background-image:url('https://cdn.prod.website-files.com/69dea01ac50b3af2941507a6/69e4963d76c7cf632c1a0902_3404c2318c1b1f14f7c44dec9ced6823de519dd1fb66a5c7e082e83c64cea200._SX1080_FMjpg_.jpg')"></div>
+  <div class="hero-gradient"></div>
+  <div class="hero-vignette"></div>
+  <div class="hero-content">
+    <div class="hero-label"><div class="hero-label-line"></div>ÖNE ÇIKAN</div>
+    <h1 id="hero-title">Flap Jack</h1>
+    <div class="hero-meta">
+      <span class="hero-rating">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="#f0b429"><path d="M6.5 0l1.5 4.5H13l-3.8 2.8 1.4 4.5L6.5 9.3l-4.1 2.5 1.4-4.5L0 4.5h5z"/></svg>
+        8.2
+      </span>
+      <span class="hero-year" id="hero-year">2008</span>
+      <span class="age-tag" id="hero-age">8+</span>
+    </div>
+    <p id="hero-desc">Cesur maceraperest Flap Jack ve kaptanı Knuckles ile birlikte maceralı bir deniz yolculuğuna çıkın. Komedi ve aksiyon dolu Cartoon Network klasiği.</p>
+    <div class="hero-buttons">
+      <button class="btn-play" onclick="openContent('flapjack')">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="white"><path d="M3 2l10 6-10 6z"/></svg>
+        İzle
+      </button>
+      <button class="btn-info" onclick="toggleWatchlist('flapjack', event)">+ Listeme Ekle</button>
+    </div>
+  </div>
+</section>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('home',this)">Ana Sayfa</button>
+  <button class="tab" onclick="switchTab('watchlist',this)">İzleme Listem (<span id="wl-count">0</span>)</button>
+  <button class="tab" onclick="switchTab('continue',this)">Devam Edilenler</button>
+</div>
+
+<!-- HOME TAB -->
+<div id="tab-home" class="tab-content active">
+
+  <!-- 🎬 BUGÜNÜN EN İYİLERİ — AI POWERED -->
+  <section class="section section-ai-glow">
+    <div class="section-header">
+      <div class="section-title">
+        <span class="section-title-accent">🎬</span> Bugünün En İyileri
+        <span class="ai-badge"><span class="ai-badge-dot"></span>AI Seçimi</span>
+      </div>
+    </div>
+    <div class="slider-container">
+      <button class="slider-nav left" onclick="moveSlider('best-slider', -1)">‹</button>
+      <div class="slider-wrapper" id="best-wrapper">
+        <div class="slider" id="best-slider">
+          <div class="skeleton-card"><div class="skeleton-thumb"></div></div>
+          <div class="skeleton-card"><div class="skeleton-thumb"></div></div>
+          <div class="skeleton-card"><div class="skeleton-thumb"></div></div>
+          <div class="skeleton-card"><div class="skeleton-thumb"></div></div>
+        </div>
+      </div>
+      <button class="slider-nav right" onclick="moveSlider('best-slider', 1)">›</button>
+    </div>
+  </section>
+
+  <!-- ⚡ TREND OLANLAR — AI POWERED -->
+  <section class="section">
+    <div class="section-header">
+      <div class="section-title">
+        <span class="section-title-accent">⚡</span> Trend Olanlar
+        <span class="trend-badge"><span class="trend-badge-icon">↑</span>Çok İzleniyor</span>
+      </div>
+    </div>
+    <div class="slider-container">
+      <button class="slider-nav left" onclick="moveSlider('trend-slider', -1)">‹</button>
+      <div class="slider-wrapper" id="trend-wrapper">
+        <div class="slider" id="trend-slider">
+          <div class="skeleton-card"><div class="skeleton-thumb"></div></div>
+          <div class="skeleton-card"><div class="skeleton-thumb"></div></div>
+          <div class="skeleton-card"><div class="skeleton-thumb"></div></div>
+          <div class="skeleton-card"><div class="skeleton-thumb"></div></div>
+        </div>
+      </div>
+      <button class="slider-nav right" onclick="moveSlider('trend-slider', 1)">›</button>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <div class="section-title"><span class="section-title-accent">★</span> Size Özel Öneriler</div>
+    </div>
+    <div class="slider-container">
+      <button class="slider-nav left" onclick="moveSlider('rec-slider', -1)">‹</button>
+      <div class="slider-wrapper" id="rec-wrapper"><div class="slider" id="rec-slider"></div></div>
+      <button class="slider-nav right" onclick="moveSlider('rec-slider', 1)">›</button>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <div class="section-title"><span class="section-title-accent">↑</span> Yeni Geldiler</div>
+    </div>
+    <div class="slider-container">
+      <button class="slider-nav left" onclick="moveSlider('new-slider', -1)">‹</button>
+      <div class="slider-wrapper" id="new-wrapper"><div class="slider" id="new-slider"></div></div>
+      <button class="slider-nav right" onclick="moveSlider('new-slider', 1)">›</button>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <div class="section-title"><span class="section-title-accent">▣</span> Efsanevi Diziler</div>
+    </div>
+    <div class="slider-container">
+      <button class="slider-nav left" onclick="moveSlider('cn-slider', -1)">‹</button>
+      <div class="slider-wrapper" id="cn-wrapper"><div class="slider" id="cn-slider"></div></div>
+      <button class="slider-nav right" onclick="moveSlider('cn-slider', 1)">›</button>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <div class="section-title"><span class="section-title-accent">+</span> Daha Fazla Dizi</div>
+    </div>
+    <div class="slider-container">
+      <button class="slider-nav left" onclick="moveSlider('more-slider', -1)">‹</button>
+      <div class="slider-wrapper" id="more-wrapper"><div class="slider" id="more-slider"></div></div>
+      <button class="slider-nav right" onclick="moveSlider('more-slider', 1)">›</button>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-header">
+      <div class="section-title"><span class="section-title-accent">+</span> Bunlar Hem Popüler Hem Efsanevi</div>
+    </div>
+    <div class="slider-container">
+      <button class="slider-nav left" onclick="moveSlider('mor-slider', -1)">‹</button>
+      <div class="slider-wrapper" id="mor-wrapper"><div class="slider" id="mor-slider"></div></div>
+      <button class="slider-nav right" onclick="moveSlider('mor-slider', 1)">›</button>
+    </div>
+  </section>
+</div>
+
+<!-- WATCHLIST TAB -->
+<div id="tab-watchlist" class="tab-content">
+  <section class="section">
+    <div class="section-header"><div class="section-title">İzleme Listem</div></div>
+    <div id="watchlist-grid" class="wl-grid"></div>
+  </section>
+</div>
+
+<!-- CONTINUE TAB -->
+<div id="tab-continue" class="tab-content">
+  <section class="section">
+    <div class="section-header"><div class="section-title">İzlemeye Devam Et</div></div>
+    <div class="slider-container">
+      <button class="slider-nav left" onclick="moveSlider('continue-slider', -1)">‹</button>
+      <div class="slider-wrapper" id="continue-wrapper"><div class="slider" id="continue-slider"></div></div>
+      <button class="slider-nav right" onclick="moveSlider('continue-slider', 1)">›</button>
+    </div>
+  </section>
+</div>
+
+<footer>© <?= date('Y') ?> <strong>WOX+</strong> — Bu bir demo projedir.</footer>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif"></div>
+
+<!-- AI PANEL -->
+<div class="ai-overlay" id="ai-overlay" onclick="handleOverlayClick(event)">
+  <div class="ai-panel">
+    <div class="ai-header">
+      <div class="ai-header-left">
+        <div class="ai-logo">✦</div>
+        <div>
+          <div class="ai-header-title">WOX AI</div>
+          <div class="ai-header-sub">Kişisel içerik asistanın</div>
+        </div>
+      </div>
+      <button class="ai-close-btn" onclick="toggleAI()">✕</button>
+    </div>
+
+    <div class="ai-mood-section">
+      <div class="ai-mood-label">Şu an nasıl hissediyorsun?</div>
+      <div class="ai-mood-chips">
+        <button class="mood-chip" onclick="selectMood(this, 'neşeli')">😄 Neşeli</button>
+        <button class="mood-chip" onclick="selectMood(this, 'maceraperest')">⚡ Maceraperest</button>
+        <button class="mood-chip" onclick="selectMood(this, 'nostaljik')">🌙 Nostaljik</button>
+        <button class="mood-chip" onclick="selectMood(this, 'sakin')">☁️ Sakin</button>
+        <button class="mood-chip" onclick="selectMood(this, 'heyecanlı')">🔥 Heyecanlı</button>
+        <button class="mood-chip" onclick="selectMood(this, 'komedi')">😂 Komedi</button>
+      </div>
+    </div>
+
+    <div class="ai-messages" id="ai-messages">
+      <div class="ai-msg assistant">
+        Merhaba! 👋 Ben WOX AI. Sana en uygun içerikleri önermek için buradayım.<br><br>
+        Bugün nasıl bir şeyler izlemek istersin? Bir ruh halini seç ya da doğrudan sor — izleme geçmişine ve beğenilerine göre sana özel önerim hazır!
+      </div>
+    </div>
+
+    <div class="ai-input-row">
+      <textarea class="ai-input" id="ai-input" placeholder="Ne izlemek istiyorsun? Ruh halinizi, türünü yazın..." rows="1"
+        onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendAIMessage()}"
+        oninput="this.style.height='auto'; this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
+      <button class="ai-send-btn" id="ai-send-btn" onclick="sendAIMessage()">Sor →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const CONTENT = {
+  recommended: [
+    { id:'steven', title:'Steven Universe', age:'18+', lang:'Dublajlı', genre:'macera,duygu', img:'https://cdn.prod.website-files.com/69dea01ac50b3af2941507a6/69e3aec3541a609e2c7f64a3_d7f9f30bec10f0d4523eb9be85353785edb5d9f42cdae9cd1ec6a89110651659.jpg' },
+    { id:'greens', title:'Greenlerin B.M', age:'7+', lang:'Dublajlı', genre:'komedi,aile', img:'https://cdn.prod.website-files.com/69dea01ac50b3af2941507a6/69e3d03042b1c52244288e1c_greenlerin-buyuksehir-maceralari-3.jpg' },
+    { id:'benalien', title:'Ben 10 Alien Force', age:'12+', lang:'Dublajlı', genre:'aksiyon,macera', img:'https://cdn.prod.website-files.com/69dea01ac50b3af2941507a6/69e48e6a1b974fa98e9c2b5a_b09f304b7f2e502cd9b390127573819c269f57728e9a0b85c427effb3e8ba47f.jpg' },
+    { id:'beybx', title:'Beyblade X', age:'6+', lang:'Dublajlı', genre:'aksiyon,spor', img:'https://cdn.prod.website-files.com/69dea01ac50b3af2941507a6/69e48efe662c5ad618647cad_8c9510c302748fed410b43e21471e455.jpg' },
+    { id:'108', title:'Hero 108', age:'6+', lang:'Dublajlı', genre:'aksiyon,hikaye', img:'https://m.media-amazon.com/images/M/MV5BMWU4NmVjZDItOTIwMS00OTgyLThjYzItNDY5YjEzZTZmNmM0XkEyXkFqcGc@._V1_.jpg' },
+    { id:'oggy', title:'Oggy ve Hamam Böcekleri', age:'3+', lang:'Dublajlı', genre:'aksiyon,komedi', img:'https://media.themoviedb.org/t/p/w500/aFAN9aKm0OblOr30ROejJCV8rGf.jpg' },
+    { id:'cesur', title:'Cesur Korkak Köpek', age:'12+', lang:'Dublajlı', genre:'aksiyon,korku', img:'https://images.justwatch.com/poster/336010329/s718/cesur-korkak-kopek.jpg' },
+  ],
+  newItems: [
+    { id:'jeff', title:'Jeff', age:'18+', lang:'', genre:'komedi,yetişkin', img:'https://cdn.prod.website-files.com/69dea01ac50b3af2941507a6/69e48f904c3c323740e24200_image-w1280.jpg' },
+    { id:'odd', title:'The Fairly Oddparents', age:'7+', lang:'', genre:'komedi,aile', img:'https://m.media-amazon.com/images/M/MV5BY2RlNWMwZmUtMjM4MC00MDczLTk3NjktYTg2OTNiNThhNmNhXkEyXkFqcGc@._V1_.jpg' },
+    { id:'dijisirk', title:'Diji Sirk', age:'13+', lang:'', genre:'komedi,animasyon', img:'https://cdn.prod.website-files.com/69dea01ac50b3af2941507a6/69e48fbc6f0226003327758c_maxresdefault%20(6).jpg' },
+    { id:'heluve', title:'Heluve Hotel', age:'18+', lang:'', genre:'komedi,yetişkin,fantezi', img:'https://cdn.prod.website-files.com/69dea01ac50b3af2941507a6/69e4904d6915e01deabda737_cec656c269fd9d221a8cb5f7376568e8291fac0543a14715e2b8775a430c44fd._SX1080_FMjpg_.jpg' },
+    { id:'bean', title:'Mr Bean', age:'7+', lang:'', genre:'komedi,aile,fantezi', img:'https://images.justwatch.com/poster/141564498/s718/mr-bean.jpg' },
+    { id:'loud', title:'The Loud House', age:'7+', lang:'', genre:'komedi,aile,macera', img:'https://m.media-amazon.com/images/M/MV5BZjlkMmQ5YzItZGRmMy00NjVjLWIwYmMtMzJjM2QxM2Q1OThkXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg' },
+    { id:'looney', title:'Looney Tunes Cartoons', age:'12+', lang:'', genre:'komedi,aile,klasik', img:'https://m.media-amazon.com/images/M/MV5BMTJlMzc1M2ItMDk2ZS00MjU5LWIwMjUtMzM0NzhhMThiNTYzXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg' },
+    { id:'adventure', title:'Adventure Time', age:'10+', lang:'', genre:'komedi,aile,macera', img:'https://m.media-amazon.com/images/M/MV5BMjkxMzIwNmQtMzM5Ni00YWJiLTg4YjQtNjBiN2IxMjZhMGQ2XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg' },
+    { id:'regular', title:'Regular Show', age:'12+', lang:'', genre:'komedi,aile,macera', img:'https://m.media-amazon.com/images/M/MV5BNDJlMGI1MDYtZDM0MS00NDYzLWIyMmUtZTY5MjY3MzJiN2QwXkEyXkFqcGc@._V1_.jpg' },
+  ],
+  cartoonNetwork: [
+    { id:'ninjago', title:'Ninjago', age:'6+', lang:'Dublajlı', genre:'aksiyon,macera,ninja', img:'https://cdn.prod.website-files.com/69dea01ac50b3af2941507a6/69e494eebfafaca132eb042a_eeaa.jpeg' },
+    { id:'flap', title:'Flap Jack', age:'8+', lang:'Dublajlı', genre:'komedi,macera,deniz', img:'https://cdn.prod.website-files.com/69dea01ac50b3af2941507a6/69e4963d76c7cf632c1a0902_3404c2318c1b1f14f7c44dec9ced6823de519dd1fb66a5c7e082e83c64cea200._SX1080_FMjpg_.jpg' },
+    { id:'ben', title:'Ben 10 Classic', age:'12+', lang:'Dublajlı', genre:'aksiyon,süper kahraman', img:'https://cdn.prod.website-files.com/69dea01ac50b3af2941507a6/69e496fc170f6066edd7b301_OS01_29.webp' },
+    { id:'power', title:'Powerpuff Girls', age:'12+', lang:'Dublajlı', genre:'aksiyon,komedi,kahraman', img:'https://cdn.prod.website-files.com/69dea01ac50b3af2941507a6/69e49b58250ec9f6ee3b3ddc_097313d6-6ee4-11ef-80b0-12734a5a1b4d.avif' },
+    { id:'turtles', title:'Mutant Ninja Turtles 1987', age:'12+', lang:'Dublajlı', genre:'komedi,aksiyon,macera', img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPo5FvOSgV7_Jl0qdcAIHmeibJrarGR90J0w&s' },
+    { id:'lyko', title:'Lyoko Kodu', age:'8+', lang:'Dublajlı', genre:'komedi,aksiyon,macera', img:'https://images.justwatch.com/poster/163516182/s718/lyoko-kodu.jpg' },
+    { id:'smalls', title:'Smalls', age:'18+', lang:'Dublajlı', genre:'komedi,aksiyon,macera', img:'https://m.media-amazon.com/images/M/MV5BM2MzZjQ5ZGYtMmQxMC00ZGYxLWEwYmMtYTU5NDU3ZWY5YzkzXkEyXkFqcGc@._V1_QL75_UX190_CR0,28,190,281_.jpg' },
+  ],
+  more: [
+    { id:'beavis', title:'Beavis & Butthead', age:'18+', lang:'Dublajlı', genre:'komedi,yetişkin,absürd', img:'https://cdn.prod.website-files.com/69dea01ac50b3af2941507a6/69e25323b982d75eb8544b42_COMEDYCENTRAL_MIKEJUDGESBEAVISBUTTHEAD_101_HD_1548672_1920x1080.jpg' },
+    { id:'jack', title:'Samurai Jack', age:'18+', lang:'Dublajlı', genre:'aksiyon,macera,epik', img:'https://cdn.prod.website-files.com/69dea01ac50b3af2941507a6/69e4cbd9e4f12e42bba5cf86_aa.jpg' },
+    { id:'evin', title:'Grim And Evil', age:'13+', lang:'altyazılı', genre:'komedi,aile,klasik', img:'https://mediaproxy.tvtropes.org/width/1200/https://static.tvtropes.org/pmwiki/pub/images/img_5071_6.jpeg' },
+    { id:'murder', title:'Murder Drones', age:'13+', lang:'altyazılı', genre:'komedi,yetişkin,yeni', img:'https://m.media-amazon.com/images/M/MV5BZmIwNDhhMTgtMWIyYS00Yzg0LTlmZjUtYTczNTU5MGVkNjlhXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg' },
+    { id:'field', title:'Garfield', age:'3+', lang:'Dublajlı', genre:'komedi,aile,klasik', img:'https://m.media-amazon.com/images/I/81S9kwMk5+L._AC_UF894,1000_QL80_.jpg' },
+    { id:'johnny', title:'Johnny Test', age:'6+', lang:'Dublajlı', genre:'komedi,aile,aksiyon', img:'https://m.media-amazon.com/images/M/MV5BMTcyYTIwOWMtYTFjNS00NTA1LWE5ODItMmY4MjEwMTYxYjg5XkEyXkFqcGc@._V1_.jpg' },
+    { id:'avatar', title:'Avatar', age:'12+', lang:'Hintçe', genre:'komedi,aile,aksiyon', img:'https://m.media-amazon.com/images/M/MV5BNmRlZmEyZTctMGZkMy00Zjg4LWJhYTctNWU0NzNhYzdlMzA4XkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg' },
+    { id:'scooby', title:'Scooby Doo Gizem Avcıları', age:'13+', lang:'English', genre:'komedi,aile,gizem,korkutucu', img:'https://upload.wikimedia.org/wikipedia/en/b/bb/Scooby_doo_mystery_incorporated_poster.jpg' },
+  ],
+  mor: [
+    { id:'box', title:'Cartoon Box', age:'18+', lang:'Dublajlı', genre:'komedi,yetişkin,absürd', img:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTh0XmOxeqPn8YlRLWSNUiFnKKlWgk1dH3ziA&s' },
+    { id:'ttg', title:'Teen Titans Go', age:'10+', lang:'English', genre:'aksiyon,macera,epik', img:'https://m.media-amazon.com/images/M/MV5BMjE5MjMzOTc1Ml5BMl5BanBnXkFtZTcwNDQxMDY5OQ@@._V1_FMjpg_UX1000_.jpg' },
+    { id:'jade', title:'Jade Armor', age:'10+', lang:'English', genre:'komedi,aile,kültürel', img:'https://m.media-amazon.com/images/M/MV5BMDViNWQ2ZTQtN2VjYS00NzE2LWEyYTgtN2JjMDQ3NTg3MTdhXkEyXkFqcGc@._V1_.jpg' },
+    { id:'yaz', title:'Yaz Kampı Adası', age:'5+', lang:'Dublajlı', genre:'komedi,macera,dostluk', img:'https://images.justwatch.com/poster/306568959/s332/sezon-1.jpg' },
+    { id:'batman', title:'Batman Animated Series', age:'13+', lang:'English', genre:'aksiyon,aile,klasik', img:'https://resizing.flixster.com/-kCbkXYzyRHUNwNZVLqCKi0TCd8=/fit-in/705x460/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p183921_b_v9_aw.jpg' },
+    { id:'clarence', title:'Clarence', age:'6+', lang:'English', genre:'komedi,aile,dram', img:'https://m.media-amazon.com/images/M/MV5BMjNhYWQ3ZjgtYWQ2Ny00MzQ4LWFiODgtMWJkZDYwYWE1NDZmXkEyXkFqcGc@._V1_.jpg' },
+    { id:'kasaba', title:'Esrarengiz Kasaba', age:'12+', lang:'Dublajlı', genre:'komedi,aile,macera', img:'https://images.justwatch.com/poster/304523615/s332/sezon-1.jpg' },
+  ]
+};
+
+let watchlist = JSON.parse(localStorage.getItem('wox_watchlist') || '[]');
+let continueWatch = JSON.parse(localStorage.getItem('wox_continue') || '[]');
+let aiHistory = [];
+let selectedMood = '';
+
+function createCard(item, showProgress = false, rank = 0) {
+  const progress = showProgress ? (continueWatch.find(c => c.id === item.id)?.progress || 0) : 0;
+  const inWL = watchlist.includes(item.id);
+  const rankHtml = rank > 0 ? `<div class="card-rank">${rank}</div>` : '';
+  return `
+    <div class="content-card" onclick="openContent('${item.id}')">
+      <div class="content-card-inner">
+        <div class="content-card-thumb">
+          <img src="${item.img}" alt="${item.title}" loading="lazy">
+          ${progress > 0 ? `<div class="card-progress"><div class="card-progress-fill" style="width:${progress}%"></div></div>` : ''}
+          ${rankHtml}
+        </div>
+        <div class="content-card-info">
+          <div class="content-card-title">${item.title}</div>
+          <div class="content-card-meta">
+            <span class="age-tag">${item.age}</span>
+            ${item.lang ? `<span class="lang-tag">${item.lang}</span>` : ''}
+          </div>
+        </div>
+      </div>
+      <button class="card-wl-btn ${inWL ? 'in-list' : ''}"
+        onclick="event.stopPropagation(); event.stopImmediatePropagation(); toggleWatchlist('${item.id}', event)"
+        title="${inWL ? 'Listeden çıkar' : 'Listeye ekle'}">
+        ${inWL ? '✓' : '+'}
+      </button>
+    </div>`;
+}
+
+function moveSlider(sliderId, direction) {
+  const slider = document.getElementById(sliderId);
+  if (!slider) return;
+  slider.parentElement.scrollBy({ left: direction * 256 * 3, behavior: 'smooth' });
+}
+
+function renderSlider(sliderId, items, showProgress = false, showRank = false) {
+  const c = document.getElementById(sliderId);
+  if (c) c.innerHTML = items.map((item, i) => createCard(item, showProgress, showRank ? i + 1 : 0)).join('');
+}
+
+function getAllContent() {
+  return [...CONTENT.recommended, ...CONTENT.newItems, ...CONTENT.cartoonNetwork, ...CONTENT.more, ...CONTENT.mor];
+}
+
+function computeTrendScores() {
+  const all = getAllContent();
+  const baseScores = {
+    'adventure':9.4, 'regular':9.1, 'ben':8.9, 'avatar':8.8, 'ninjago':8.7,
+    'power':8.5, 'steven':8.4, 'jack':8.3, 'flap':8.2, 'oggy':8.1,
+    'odd':8.0, 'ttg':7.9, 'batman':7.8, 'looney':7.7, 'greens':7.6,
+    'murder':7.5, 'heluve':7.4, 'loud':7.3, 'bean':7.2, 'benalien':7.1
+  };
+  return all
+    .map(item => ({ item, score: (baseScores[item.id] || 6.0) + (watchlist.includes(item.id) ? 0.3 : 0) }))
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8)
+    .map(x => x.item);
+}
+
+async function loadAIBestToday() {
+  const all = getAllContent();
+  const watchedItems = continueWatch.map(cw => all.find(i => i.id === cw.id)).filter(Boolean);
+  const listedItems  = all.filter(i => watchlist.includes(i.id));
+
+  const catalog = all.map(i => `id:${i.id} | ${i.title} | tür:${i.genre} | yaş:${i.age}`).join('\n');
+
+  let userCtx = 'Yeni kullanıcı.';
+  if (watchedItems.length)
+    userCtx = `İzledikleri: ${watchedItems.map(i => i.title + '(' + i.genre + ')').join(', ')}.`;
+  if (listedItems.length)
+    userCtx += ` Listesi: ${listedItems.map(i => i.title).join(', ')}.`;
+
+  const systemPrompt = `Sen WOX+ streaming platformunun kişiselleştirme motorusun.
+Görev: Kullanıcının izleme geçmişine ve listesine bakarak bugün için en uygun 5 içeriği seç.
+Katalog:\n${catalog}
+
+Kullanıcı bağlamı: ${userCtx}
+
+SADECE şu JSON formatında yanıt ver, başka hiçbir şey yazma:
+{"ids":["id1","id2","id3","id4","id5"]}
+
+Geçmişte izlediği türlere benzer ama daha önce görmediği içerikleri tercih et. Eğer geçmiş yoksa en popüler ve çok yönlü 5 içeriği seç.`;
+
+  try {
+    const response = await fetch('https://api.llm7.io/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer unused' },
+      body: JSON.stringify({
+        model: 'default',
+        messages: [{ role: 'user', content: systemPrompt }]
+      })
+    });
+    const data = await response.json();
+    const raw = data.choices?.[0]?.message?.content || '{}';
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    const ids = parsed.ids || [];
+    const bestItems = ids.map(id => all.find(i => i.id === id)).filter(Boolean);
+
+    if (bestItems.length > 0) {
+      renderSlider('best-slider', bestItems);
+    } else {
+      const fallback = [...listedItems, ...CONTENT.newItems].slice(0, 5);
+      renderSlider('best-slider', fallback.length ? fallback : CONTENT.recommended.slice(0, 5));
+    }
+  } catch(e) {
+    const fallback = listedItems.length
+      ? listedItems.slice(0, 5)
+      : CONTENT.recommended.slice(0, 5);
+    renderSlider('best-slider', fallback);
+  }
+}
+
+function renderAll() {
+  renderSlider('rec-slider',      CONTENT.recommended);
+  renderSlider('new-slider',      CONTENT.newItems);
+  renderSlider('cn-slider',       CONTENT.cartoonNetwork);
+  renderSlider('more-slider',     CONTENT.more);
+  renderSlider('mor-slider',      CONTENT.mor);
+
+  const trendItems = computeTrendScores();
+  renderSlider('trend-slider', trendItems, false, true);
+
+  const continueItems = continueWatch.map(cw => getAllContent().find(i => i.id === cw.id)).filter(Boolean);
+  renderSlider('continue-slider', continueItems, true);
+
+  const all = getAllContent();
+  const wlItems = all.filter(item => watchlist.includes(item.id));
+  const wlGrid  = document.getElementById('watchlist-grid');
+  if (wlItems.length) {
+    wlGrid.innerHTML = wlItems.map(item => createCard(item)).join('');
+  } else {
+    wlGrid.innerHTML = `<div class="wl-empty"><div class="wl-empty-icon">🎬</div><p>Listeniz henüz boş.<br>İçeriklere + ile ekleyebilirsiniz.</p></div>`;
+  }
+  document.getElementById('wl-count').textContent = watchlist.length;
+}
+
+function toggleWatchlist(id, e) {
+  if (e) { e.stopPropagation(); e.stopImmediatePropagation(); }
+  if (watchlist.includes(id)) {
+    watchlist = watchlist.filter(x => x !== id);
+    showNotif('Listeden çıkarıldı', false);
+  } else {
+    watchlist.push(id);
+    showNotif('Listeye eklendi ✓', true);
+  }
+  localStorage.setItem('wox_watchlist', JSON.stringify(watchlist));
+  renderAll();
+  loadAIBestToday();
+}
+
+function openContent(id) {
+  const item = getAllContent().find(i => i.id === id);
+  if (!item) return;
+  let idx = continueWatch.findIndex(c => c.id === id);
+  if (idx >= 0) {
+    continueWatch[idx].progress = Math.min(continueWatch[idx].progress + 25, 95);
+  } else {
+    continueWatch.unshift({ id, progress: 35 });
+  }
+  continueWatch = continueWatch.slice(0, 10);
+  localStorage.setItem('wox_continue', JSON.stringify(continueWatch));
+  renderAll();
+  loadAIBestToday();
+  window.open(`/video/${id}.php`, '_blank');
+}
+
+function showNotif(msg, success = false) {
+  const notif = document.getElementById('notif');
+  notif.textContent = msg;
+  notif.style.borderLeftColor = success ? '#22c55e' : 'var(--accent)';
+  notif.classList.add('show');
+  setTimeout(() => notif.classList.remove('show'), 2800);
+}
+
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+function toggleAI() {
+  const overlay = document.getElementById('ai-overlay');
+  overlay.classList.toggle('open');
+  if (overlay.classList.contains('open') && aiHistory.length === 0) {
+    setTimeout(() => autoAnalyzeUser(), 400);
+  }
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('ai-overlay')) toggleAI();
+}
+
+function selectMood(btn, mood) {
+  document.querySelectorAll('.mood-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  selectedMood = mood;
+  sendAIMessage(`${mood} hissediyorum, ne önerisin?`);
+}
+
+function addAIMessage(role, content) {
+  const msgs = document.getElementById('ai-messages');
+  const typing = msgs.querySelector('.ai-typing-wrapper');
+  if (typing) typing.remove();
+  const div = document.createElement('div');
+  div.className = `ai-msg ${role}`;
+  div.innerHTML = content;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('ai-messages');
+  const div = document.createElement('div');
+  div.className = 'ai-msg assistant thinking ai-typing-wrapper';
+  div.innerHTML = `<div class="ai-typing"><div class="ai-typing-dot"></div><div class="ai-typing-dot"></div><div class="ai-typing-dot"></div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function autoAnalyzeUser() {
+  const all = getAllContent();
+  const watchedItems = continueWatch.map(cw => all.find(i => i.id === cw.id)).filter(Boolean);
+  const listedItems = all.filter(i => watchlist.includes(i.id));
+  let context = '';
+  if (watchedItems.length) context += `İzleme geçmişi: ${watchedItems.map(i => i.title + ' (' + i.genre + ')').join(', ')}. `;
+  if (listedItems.length) context += `İzleme listesi: ${listedItems.map(i => i.title).join(', ')}. `;
+  if (!context) context = 'Henüz izleme geçmişi yok.';
+  callAI([{ role: 'user', content: 'Merhaba! Benim için bir içerik önerisi yapabilir misin?' }], buildSystemPrompt(context));
+}
+
+function buildSystemPrompt(userContext = '') {
+  const all = getAllContent();
+  const catalog = all.map(i => `- ${i.title} (id:${i.id}, tür:${i.genre}, yaş:${i.age})`).join('\n');
+  return `Sen WOX+ adlı Türkçe streaming platformunun AI asistanısın. Kullanıcıya kişiselleştirilmiş içerik önerileri sunuyorsun.\n\nPlatform içerikleri:\n${catalog}\n\nKullanıcı bağlamı: ${userContext || 'Yeni kullanıcı'}\n\nKurallar:\n- Sadece platform içeriklerini öner\n- Öneri yaparken içeriğin id'sini [ÖNERİ:id] formatında belirt\n- Türkçe yanıt ver, samimi ve kısa ol\n- Kullanıcının ruh haline ve izleme geçmişine göre öner\n- Her yanıtta 1-3 içerik öner\n- Emoji kullanabilirsin ama aşırıya kaçma`;
+}
+
+async function sendAIMessage(forceMsg = '') {
+  const input = document.getElementById('ai-input');
+  const sendBtn = document.getElementById('ai-send-btn');
+  const msg = forceMsg || input.value.trim();
+  if (!msg) return;
+  if (!forceMsg) input.value = '';
+  input.style.height = 'auto';
+  addAIMessage('user', msg);
+  aiHistory.push({ role: 'user', content: msg });
+  showTyping();
+  sendBtn.disabled = true;
+
+  const all = getAllContent();
+  const watchedItems = continueWatch.map(cw => all.find(i => i.id === cw.id)).filter(Boolean);
+  const listedItems = all.filter(i => watchlist.includes(i.id));
+  let context = '';
+  if (watchedItems.length) context += `İzleme geçmişi: ${watchedItems.map(i => i.title + '(' + i.genre + ')').join(', ')}. `;
+  if (listedItems.length) context += `Listesi: ${listedItems.map(i => i.title).join(', ')}. `;
+  if (selectedMood) context += `Şu anki ruh hali: ${selectedMood}. `;
+
+  try {
+    const response = await fetch('https://api.llm7.io/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer unused' },
+      body: JSON.stringify({ model: 'default', messages: [{ role: 'system', content: buildSystemPrompt(context) }, ...aiHistory] })
+    });
+    const data = await response.json();
+    const reply = data.choices?.[0]?.message?.content || 'Üzgünüm, şu an yanıt veremiyorum.';
+    aiHistory.push({ role: 'assistant', content: reply });
+
+    const suggestionIds = [...reply.matchAll(/\[ÖNERİ:([^\]]+)\]/g)].map(m => m[1]);
+    const cleanReply = reply.replace(/\[ÖNERİ:[^\]]+\]/g, '').trim();
+    let html = cleanReply;
+    if (suggestionIds.length > 0) {
+      const suggCards = suggestionIds.map(sid => {
+        const item = all.find(i => i.id === sid);
+        if (!item) return '';
+        return `<div class="ai-suggestion-card" onclick="openContent('${item.id}'); toggleAI();">
+          <img src="${item.img}" alt="${item.title}">
+          <div>
+            <div style="font-weight:600;font-size:0.85rem;">${item.title}</div>
+            <div style="color:#a78bfa;font-size:0.75rem;margin-top:2px;">${item.age} · ${item.lang || 'Orijinal'}</div>
+          </div>
+        </div>`;
+      }).join('');
+      html += `<div class="ai-suggestions" style="margin-top:12px;">${suggCards}</div>`;
+    }
+    addAIMessage('assistant', html);
+  } catch (err) {
+    const typing = document.querySelector('.ai-typing-wrapper');
+    if (typing) typing.remove();
+    addAIMessage('assistant', '⚠️ Bağlantı hatası. Lütfen tekrar deneyin.');
+  }
+  sendBtn.disabled = false;
+}
+
+async function callAI(messages, systemPrompt) {
+  showTyping();
+  try {
+    const response = await fetch('https://api.llm7.io/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer unused' },
+      body: JSON.stringify({ model: 'default', messages: [{ role: 'system', content: systemPrompt }, ...messages] })
+    });
+    const data = await response.json();
+    const reply = data.choices?.[0]?.message?.content || '';
+    aiHistory.push({ role: 'assistant', content: reply });
+
+    const all = getAllContent();
+    const suggestionIds = [...reply.matchAll(/\[ÖNERİ:([^\]]+)\]/g)].map(m => m[1]);
+    const cleanReply = reply.replace(/\[ÖNERİ:[^\]]+\]/g, '').trim();
+    let html = cleanReply;
+    if (suggestionIds.length > 0) {
+      const suggCards = suggestionIds.map(sid => {
+        const item = all.find(i => i.id === sid);
+        if (!item) return '';
+        return `<div class="ai-suggestion-card" onclick="openContent('${item.id}'); toggleAI();">
+          <img src="${item.img}" alt="${item.title}">
+          <div>
+            <div style="font-weight:600;font-size:0.85rem;">${item.title}</div>
+            <div style="color:#a78bfa;font-size:0.75rem;margin-top:2px;">${item.age} · ${item.lang || 'Orijinal'}</div>
+          </div>
+        </div>`;
+      }).join('');
+      html += `<div class="ai-suggestions" style="margin-top:12px;">${suggCards}</div>`;
+    }
+    addAIMessage('assistant', html);
+  } catch(e) {
+    const typing = document.querySelector('.ai-typing-wrapper');
+    if (typing) typing.remove();
+    addAIMessage('assistant', 'Şu an analiz yapılamıyor. Ama sana önereceğim çok şey var! 😊');
+  }
+}
+
+window.onload = () => {
+  renderAll();
+  loadAIBestToday();
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('solid', window.scrollY > 50);
+  });
+};
+</script>
+</body>
+</html>
